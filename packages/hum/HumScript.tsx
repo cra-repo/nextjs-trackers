@@ -1,13 +1,41 @@
 import { FC } from 'react';
-import Script from 'next/script';
+import Script, { ScriptProps } from 'next/script';
 import { humWindow } from './humWindow';
 
 export type HumTrackerOptions = Record<'apiKey' | 'contentSource' | 'apiUrl' | 'cookieDomain',
   string> & { useIframeStorage?: true };
 
-const Hum: FC<HumTrackerOptions & { scriptSrc: string | undefined }> = ({
+/*
+<script>
+  window.humTracker = window.humTracker || {};
+  window.humTracker.options = {
+    apiKey: '{ }',
+    contentSource: '{ }',
+    apiUrl: '{ }',
+    cookieDomain: '{ }',
+    useIframeStorage: true,
+  };
+  (function () {
+    const _humTracker = humTracker;
+    const queue = humTracker.preloadQueue = [];
+    window.humTracker = new Proxy(_humTracker, {
+      get(target, key) {
+        if (key in target) return target[key];
+        return (...args) => queue.push({ method: key, args });
+      },
+    });
+    humTracker.onLoad = () => window.humTracker = _humTracker;
+    const script = document.createElement('script');
+    script.src = '{ }';
+    document.head.appendChild(script);
+  }());
+</script>
+ */
+
+const Hum: FC<HumTrackerOptions & { scriptSrc: string | undefined; strategy: ScriptProps['strategy'] }> = ({
   children,
   scriptSrc: src,
+  strategy = 'afterInteractive',
   ...trackerOptions
 }) => {
   if (!humWindow || !src) return null;
@@ -33,7 +61,7 @@ const Hum: FC<HumTrackerOptions & { scriptSrc: string | undefined }> = ({
   humTracker.onLoad = () => (humWindow.humTracker = _humTracker);
   /* eslint-enable no-underscore-dangle,@typescript-eslint/ban-ts-comment */
 
-  return <Script async id="HUM_Script" src={src} strategy="afterInteractive" />;
+  return <Script async id="HUM_Script" src={src} strategy={strategy} />;
 };
 
 export default Hum;

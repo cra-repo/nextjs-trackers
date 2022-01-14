@@ -14,6 +14,7 @@ type DispatchUserEvent = (
 
 type IsUserIdentifiedByTracker = (tracker: 'hum') => boolean;
 
+/* Mock of hook. */
 export const useHumIdentify = (
   user: AbstractUser,
   dispatch: DispatchUserEvent,
